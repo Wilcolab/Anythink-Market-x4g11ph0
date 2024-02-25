@@ -21,7 +21,7 @@ services:
   anythink-frontend-react:
     build: ./frontend
     container_name: anythink-frontend-react
-    command: sh -c "cd frontend && npm install && /wait-for-it.sh anythink-backend-node:3000 -t 120 --strict -- curl --head -X GET --retry 30 --retry-connrefused --retry-delay 1 anythink-backend-node:3000/api/ping && npm run dev"
+    command: sh -c "cd frontend && /wait-for-it.sh anythink-backend-node:3000 -t 120 --strict -- curl --head -X GET --retry 30 --retry-connrefused --retry-delay 1 anythink-backend-node:3000/api/ping && npm install && npm run dev"
     environment:
       - NODE_ENV=development
       - PORT=3001
@@ -36,4 +36,14 @@ services:
       - "3001:3001"
     depends_on:
       - "anythink-backend-node"
+
+  anythink-ack:
+    image: public.ecr.aws/v0a2l7y2/wilco/anythink-ack:latest
+    container_name: anythink-ack
+    environment:
+      - GITHUB_TOKEN=$GITHUB_TOKEN
+      - CODESPACE_NAME=$CODESPACE_NAME
+      - APP_NAME=MongoDB RAG Chat
+    depends_on:
+      - "anythink-frontend-react"
 
